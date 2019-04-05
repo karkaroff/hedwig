@@ -14,15 +14,13 @@
 # limitations under the License.
 """Tokenization classes."""
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import collections
 import logging
 import os
 import unicodedata
 from io import open
 
-from .file_utils import cached_path
+from utils.io import cached_path
 
 logger = logging.getLogger(__name__)
 
@@ -74,13 +72,13 @@ def whitespace_tokenize(text):
 class BertTokenizer(object):
     """Runs end-to-end tokenization: punctuation splitting + wordpiece"""
 
-    def __init__(self, vocab_file, do_lower_case=True, max_len=None, do_basic_tokenize=True,
+    def __init__(self, vocab_file, is_lowercase=True, max_len=None, do_basic_tokenize=True,
                  never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")):
         """Constructs a BertTokenizer.
 
         Args:
           vocab_file: Path to a one-wordpiece-per-line vocabulary file
-          do_lower_case: Whether to lower case the input
+          is_lowercase: Whether to lower case the input
                          Only has an effect when do_wordpiece_only=False
           do_basic_tokenize: Whether to do basic tokenization before wordpiece.
           max_len: An artificial maximum length to truncate tokenized sequences to;
@@ -99,7 +97,7 @@ class BertTokenizer(object):
             [(ids, tok) for tok, ids in self.vocab.items()])
         self.do_basic_tokenize = do_basic_tokenize
         if do_basic_tokenize:
-          self.basic_tokenizer = BasicTokenizer(do_lower_case=do_lower_case,
+          self.basic_tokenizer = BasicTokenizer(is_lowercase=is_lowercase,
                                                 never_split=never_split)
         self.wordpiece_tokenizer = WordpieceTokenizer(vocab=self.vocab)
         self.max_len = max_len if max_len is not None else int(1e12)
@@ -177,14 +175,14 @@ class BasicTokenizer(object):
     """Runs basic tokenization (punctuation splitting, lower casing, etc.)."""
 
     def __init__(self,
-                 do_lower_case=True,
+                 is_lowercase=True,
                  never_split=("[UNK]", "[SEP]", "[PAD]", "[CLS]", "[MASK]")):
         """Constructs a BasicTokenizer.
 
         Args:
-          do_lower_case: Whether to lower case the input.
+          is_lowercase: Whether to lower case the input.
         """
-        self.do_lower_case = do_lower_case
+        self.is_lowercase = is_lowercase
         self.never_split = never_split
 
     def tokenize(self, text):
@@ -200,7 +198,7 @@ class BasicTokenizer(object):
         orig_tokens = whitespace_tokenize(text)
         split_tokens = []
         for token in orig_tokens:
-            if self.do_lower_case and token not in self.never_split:
+            if self.is_lowercase and token not in self.never_split:
                 token = token.lower()
                 token = self._run_strip_accents(token)
             split_tokens.extend(self._run_split_on_punc(token))
