@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from tensorboardX import SummaryWriter
 
-from common.trainers.trainer import Trainer
+from .trainer import Trainer
 
 
 class ClassificationTrainer(Trainer):
