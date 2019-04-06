@@ -49,7 +49,7 @@ Finally, run the following inside the `utils` directory to build the `trec_eval`
 $ ./get_trec_eval.sh
 ```
 
-## Data and Pre-Trained Models
+## Datasets
 
 Download the Reuters, AAPD and IMDB datasets, along with word2vec embeddings from 
 [`hedwig-data`](https://git.uwaterloo.ca/jimmylin/hedwig-data).
@@ -67,7 +67,7 @@ Organize your directory structure as follows:
 └── hedwig-data
 ```
 
-After cloning the hedwig-data repo, you need to unzip the embeddings and run the pre-processing script:
+After cloning the hedwig-data repo, you need to unzip the embeddings and run the preprocessing script:
 
 ```bash
 cd hedwig-data/embeddings/word2vec 
