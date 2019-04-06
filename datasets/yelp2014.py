@@ -7,7 +7,7 @@ from torchtext.data import NestedField, Field, TabularDataset
 from torchtext.data.iterator import BucketIterator
 from torchtext.vocab import Vectors
 
-from datasets.reuters import clean_string, clean_string_fl, split_sents
+from datasets.reuters import clean_string, split_sents
 
 
 def char_quantize(string, max_length=1000):
@@ -41,9 +41,9 @@ class Yelp2014(TabularDataset):
         return len(ex.text)
 
     @classmethod
-    def splits(cls, path, train=os.path.join('Yelp-Reviews-2014', 'data', 'yelp2014_train.tsv'),
-               validation=os.path.join('Yelp-Reviews-2014', 'data', 'yelp2014_validation.tsv'),
-               test=os.path.join('Yelp-Reviews-2014', 'data', 'yelp2014_test.tsv'), **kwargs):
+    def splits(cls, path, train=os.path.join('Yelp2014', 'train.tsv'),
+               validation=os.path.join('Yelp2014', 'dev.tsv'),
+               test=os.path.join('Yelp2014', 'test.tsv'), **kwargs):
         return super(Yelp2014, cls).splits(
             path, train=train, validation=validation, test=test,
             format='tsv', fields=[('label', cls.LABEL_FIELD), ('text', cls.TEXT_FIELD)]
