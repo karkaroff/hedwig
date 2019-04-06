@@ -14,8 +14,6 @@ Each model directory has a `README.md` with further details.
 
 ## Setting up PyTorch
 
-**If you are an internal Hedwig contributor using GPU machines in the lab, follow the instructions [here](docs/internal-instructions.md).**
-
 Hedwig is designed for Python 3.6 and [PyTorch](https://pytorch.org/) 0.4.
 PyTorch recommends [Anaconda](https://www.anaconda.com/distribution/) for managing your environment.
 We'd recommend creating a custom environment as follows:
@@ -25,10 +23,10 @@ $ conda create --name castor python=3.6
 $ source activate castor
 ```
 
-And installing the packages as follows:
+And installing PyTorch as follows:
 
 ```
-$ conda install pytorch torchvision -c pytorch
+$ conda install pytorch=0.4.1 cuda92 -c pytorch
 ```
 
 Other Python packages we use can be installed via pip:
@@ -37,7 +35,8 @@ Other Python packages we use can be installed via pip:
 $ pip install -r requirements.txt
 ```
 
-Code depends on data from NLTK (e.g., stopwords) so you'll have to download them. Run the Python interpreter and type the commands:
+Code depends on data from NLTK (e.g., stopwords) so you'll have to download them. 
+Run the Python interpreter and type the commands:
 
 ```python
 >>> import nltk
@@ -52,34 +51,28 @@ $ ./get_trec_eval.sh
 
 ## Data and Pre-Trained Models
 
-**If you are an internal Hedwig contributor using GPU machines in the lab, follow the instructions [here](docs/internal-instructions.md).**
+Download the Reuters, AAPD and IMDB datasets, along with word2vec embeddings from 
+[`hedwig-data`](https://git.uwaterloo.ca/jimmylin/hedwig-data).
 
-To fully take advantage of code here, clone these other two repos:
-
-+ [`Castor-data`](https://git.uwaterloo.ca/jimmylin/Castor-data): embeddings, datasets, etc.
-+ [`Caster-models`](https://git.uwaterloo.ca/jimmylin/Castor-models): pre-trained models
+```bash
+$ git clone https://github.com/castorini/hedwig.git
+$ git clone https://git.uwaterloo.ca/jimmylin/hedwig-data.git
+```
 
 Organize your directory structure as follows:
 
 ```
 .
-├── Hedwig
-├── Castor-data
-└── Castor-models
+├── hedwig
+└── hedwig-data
 ```
 
-For example (using HTTPS):
+After cloning the hedwig-data repo, you need to unzip the embeddings and run the pre-processing script:
 
 ```bash
-$ git clone https://github.com/castorini/hedwig.git
-$ git clone https://git.uwaterloo.ca/jimmylin/Castor-data.git
-$ git clone https://git.uwaterloo.ca/jimmylin/Castor-models.git
+cd hedwig-data/embeddings/word2vec 
+gzip -d GoogleNews-vectors-negative300.bin.gz 
+python bin2txt.py GoogleNews-vectors-negative300.bin GoogleNews-vectors-negative300.txt 
 ```
 
-After cloning the Hedwig-data repo, you need to unzip embeddings and run data pre-processing scripts. You can choose
-to follow instructions under each dataset and embedding directory separately, or just run the following script in 
-Hedwig-data to do all of the steps for you:
-
-```bash
-$ ./setup.sh
-```
+**If you are an internal Hedwig contributor using the machines in the lab, follow the instructions [here](docs/internal-instructions.md).**
