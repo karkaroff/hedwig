@@ -67,8 +67,8 @@ class ClassificationTrainer(Trainer):
             loss.backward()
             self.optimizer.step()
 
-            # Temp Ave
             if hasattr(self.model, 'beta_ema') and self.model.beta_ema > 0:
+                # Temporal averaging
                 self.model.update_ema()
 
             if self.iterations % self.log_interval == 1:
@@ -97,6 +97,8 @@ class ClassificationTrainer(Trainer):
             self.writer.add_scalar('Dev/Precision', dev_precision, epoch)
             self.writer.add_scalar('Dev/Recall', dev_recall, epoch)
             self.writer.add_scalar('Dev/F-measure', dev_f1, epoch)
+
+            # Print validation results
             print('\n' + dev_header)
             print(self.dev_log_template.format(time.time() - self.start, epoch, self.iterations, epoch, epochs,
                                                dev_acc, dev_precision, dev_recall, dev_f1, dev_loss))
