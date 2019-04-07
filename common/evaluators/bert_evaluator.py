@@ -1,4 +1,4 @@
-import os
+import warnings
 
 import numpy as np
 import torch
@@ -7,8 +7,11 @@ from sklearn import metrics
 from torch.utils.data import DataLoader, SequentialSampler, TensorDataset
 from tqdm import tqdm
 
-from datasets.processors.bert_processor import convert_examples_to_features
+from datasets.bert_processors.abstract_processor import convert_examples_to_features
 from utils.tokenization import BertTokenizer
+
+# Suppress warnings from sklearn.metrics
+warnings.filterwarnings('ignore')
 
 
 class BertEvaluator(object):
@@ -22,7 +25,7 @@ class BertEvaluator(object):
         else:
             self.eval_examples = self.processor.get_dev_examples(args.data_dir)
 
-    def evaluate(self):
+    def get_scores(self, silent=False):
         eval_features = convert_examples_to_features(self.eval_examples, self.args.max_seq_length, self.tokenizer)
 
         all_input_ids = torch.tensor([f.input_ids for f in eval_features], dtype=torch.long)
@@ -40,7 +43,7 @@ class BertEvaluator(object):
         nb_eval_steps, nb_eval_examples = 0, 0
         predicted_labels, target_labels = list(), list()
 
-        for input_ids, input_mask, segment_ids, label_ids in tqdm(eval_dataloader, desc="Evaluating"):
+        for input_ids, input_mask, segment_ids, label_ids in tqdm(eval_dataloader, desc="Evaluating", disable=silent):
             input_ids = input_ids.to(self.args.device)
             input_mask = input_mask.to(self.args.device)
             segment_ids = segment_ids.to(self.args.device)
@@ -74,15 +77,4 @@ class BertEvaluator(object):
         f1 = metrics.f1_score(target_labels, predicted_labels, average='micro')
         avg_loss = total_loss / nb_eval_steps
 
-        result = {'accuracy': accuracy,
-                  'precision': precision,
-                  'recall': recall,
-                  'f1': f1,
-                  'avg_loss': avg_loss}
-
-        output_eval_file = os.path.join(self.args.save_path, "eval_results.txt")
-        with open(output_eval_file, "w") as writer:
-            print("***** Eval results *****")
-            for key in sorted(result.keys()):
-                print(key, result[key])
-                writer.write("%s = %s\n" % (key, str(result[key])))
+        return [accuracy, precision, recall, f1, avg_loss], ['accuracy', 'precision', 'recall', 'f1', 'avg_loss']

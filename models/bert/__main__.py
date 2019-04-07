@@ -7,14 +7,26 @@ import torch
 
 from common.evaluators.bert_evaluator import BertEvaluator
 from common.trainers.bert_trainer import BertTrainer
-from datasets.processors.sst_processor import SST2Processor
-from datasets.processors.reuters_processor import ReutersProcessor
-from datasets.processors.imdb_processor import IMDBProcessor
+from datasets.bert_processors.imdb_processor import IMDBProcessor
+from datasets.bert_processors.reuters_processor import ReutersProcessor
+from datasets.bert_processors.sst_processor import SST2Processor
 from models.bert.args import get_args
 from models.bert.model import BertForSequenceClassification
 from utils.io import PYTORCH_PRETRAINED_BERT_CACHE
 from utils.optimization import BertAdam
 from utils.tokenization import BertTokenizer
+
+# String templates for logging results
+LOG_HEADER = 'Split  Dev/Acc.  Dev/Pr.  Dev/Re.   Dev/F1   Dev/Loss'
+LOG_TEMPLATE = ' '.join('{:>5s},{:>9.4f},{:>8.4f},{:8.4f},{:8.4f},{:10.4f}'.split(','))
+
+
+def evaluate_split(model, processor, args, split='dev'):
+    evaluator = BertEvaluator(model, processor, args, split)
+    accuracy, precision, recall, f1, avg_loss = evaluator.get_scores(silent=True)[0]
+    print('\n' + LOG_HEADER)
+    print(LOG_TEMPLATE.format(split.upper(), accuracy, precision, recall, f1, avg_loss))
+
 
 if __name__ == '__main__':
     # Set default configuration in args.py
@@ -69,8 +81,7 @@ if __name__ == '__main__':
 
     if os.path.exists(args.save_path) and os.listdir(args.save_path) and args.do_train:
         shutil.rmtree(args.save_path)
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)
+    os.makedirs(os.path.join(args.save_path, dataset_map[args.dataset].NAME))
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
@@ -86,12 +97,12 @@ if __name__ == '__main__':
             num_train_optimization_steps = num_train_optimization_steps // torch.distributed.get_world_size()
 
     cache_dir = args.cache_dir if args.cache_dir else os.path.join(str(PYTORCH_PRETRAINED_BERT_CACHE), 'distributed_{}'.format(args.local_rank))
-    model = BertForSequenceClassification.from_pretrained(args.model,
-                                                          cache_dir=cache_dir,
-                                                          num_labels=args.num_labels)
+    model = BertForSequenceClassification.from_pretrained(args.model, cache_dir=cache_dir, num_labels=args.num_labels)
+
     if args.fp16:
         model.half()
     model.to(device)
+
     if args.local_rank != -1:
         try:
             from apex.parallel import DistributedDataParallel as DDP
@@ -114,7 +125,7 @@ if __name__ == '__main__':
             from apex.optimizers import FP16_Optimizer
             from apex.optimizers import FusedAdam
         except ImportError:
-            raise ImportError("Please install Nvidia Apex for distributed and fp16 training")
+            raise ImportError("Please install NVIDIA Apex for distributed and FP16 training")
 
         optimizer = FusedAdam(optimizer_grouped_parameters,
                               lr=args.lr,
@@ -132,11 +143,12 @@ if __name__ == '__main__':
                              t_total=num_train_optimization_steps)    
 
     trainer = BertTrainer(model, optimizer, processor, args)
-    test_evaluator = BertEvaluator(model, processor, args, split='test')
 
     if args.do_train:
         trainer.train()
     else:
         model = BertForSequenceClassification.from_pretrained(args.model, num_labels=args.num_labels)
 
-    test_evaluator.evaluate()
+    model = torch.load(trainer.snapshot_path)
+    evaluate_split(model, processor, args, split='dev')
+    evaluate_split(model, processor, args, split='test')

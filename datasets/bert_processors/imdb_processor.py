@@ -1,6 +1,6 @@
 import os
 
-from datasets.processors.bert_processor import BertProcessor, InputExample
+from datasets.bert_processors.abstract_processor import BertProcessor, InputExample
 
 
 class IMDBProcessor(BertProcessor):

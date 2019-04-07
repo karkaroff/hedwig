@@ -43,12 +43,6 @@ Run the Python interpreter and type the commands:
 >>> nltk.download()
 ```
 
-Finally, run the following inside the `utils` directory to build the `trec_eval` tool for evaluating certain datasets.
-
-```bash
-$ ./get_trec_eval.sh
-```
-
 ## Datasets
 
 Download the Reuters, AAPD and IMDB datasets, along with word2vec embeddings from 
