@@ -1,9 +1,9 @@
 import os
 
-from datasets.processors.bert_processor import BertProcessor, InputExample
+from datasets.bert_processors.abstract_processor import BertProcessor, InputExample
 
 
-class Yelp2014Processor(BertProcessor):
+class AAPDProcessor(BertProcessor):
     """Processor for the IMDB dataset"""
     def get_train_examples(self, data_dir):
         """See base class."""
