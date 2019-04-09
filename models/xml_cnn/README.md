@@ -1,6 +1,14 @@
 # XML_CNN
 
-Implementation for XML Convolutional Neural Network for Document Classification of [XML-CNN (2014)](http://nyc.lti.cs.cmu.edu/yiming/Publications/jliu-sigir17.pdf) with PyTorch and Torchtext.
+Implementation of XML Convolutional Neural Network for Document Classification [XML-CNN (2014)](http://nyc.lti.cs.cmu.edu/yiming/Publications/jliu-sigir17.pdf) with PyTorch and Torchtext.
+
+## Quick Start
+
+To run the model on the Reuters dataset, just run the following from the working directory:
+
+```
+python -m models.xml_cnn --mode static --dataset Reuters --batch-size 32 --lr 0.01 --epochs 30 --dropout 0.5 --dynamic-pool-length 8 --seed 3435
+```
 
 ## Model Type
 
@@ -8,27 +16,12 @@ Implementation for XML Convolutional Neural Network for Document Classification 
 - static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). All words -- including the unknown ones that are initialized with zero -- are kept static and only the other parameters of the model are learned.
 - non-static: Same as above but the pretrained vectors are fine-tuned for each task.
 
-## Quick Start
-
-To run the model on Reuters dataset on static just run the following from the Castor working directory.
-
-```
-python -m xml_cnn --dataset Reuters
-```
-
-The file will be saved in
-
-```
-xml_cnn/saves/best_model.pt
-```
-
-
-
 ## Dataset
 
 We experiment the model on the following datasets.
 
-- Reuters: A multi-label document classification dataset. 
+- Reuters (ModApte)
+- AAPD
 
 ## Settings
 
@@ -37,4 +30,4 @@ Adam is used for training.
 
 ## TODO
 
-- Report hyperparameters and results after finetuning on other datasets like AAPD.
+- Support ONNX export. Currently throws a ONNX export failed (Couldn't export Python operator forward_flattened_wrapper) exception.
