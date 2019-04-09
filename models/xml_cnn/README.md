@@ -26,8 +26,3 @@ We experiment the model on the following datasets.
 ## Settings
 
 Adam is used for training.
-
-
-## TODO
-
-- Support ONNX export. Currently throws a ONNX export failed (Couldn't export Python operator forward_flattened_wrapper) exception.
