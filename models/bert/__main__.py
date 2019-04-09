@@ -10,6 +10,7 @@ from common.trainers.bert_trainer import BertTrainer
 from datasets.bert_processors.imdb_processor import IMDBProcessor
 from datasets.bert_processors.reuters_processor import ReutersProcessor
 from datasets.bert_processors.sst_processor import SST2Processor
+from datasets.bert_processors.aapd_processor import AAPDProcessor
 from models.bert.args import get_args
 from models.bert.model import BertForSequenceClassification
 from utils.io import PYTORCH_PRETRAINED_BERT_CACHE
@@ -61,9 +62,10 @@ if __name__ == '__main__':
         ptvsd.wait_for_attach()
 
     dataset_map = {
-        'SST-2': SST2Processor,
         'Reuters': ReutersProcessor,
-        'IMDB': IMDBProcessor
+        'AAPD': AAPDProcessor,
+        'IMDB': IMDBProcessor,
+        'SST-2': SST2Processor
     }
 
     if args.gradient_accumulation_steps < 1:
@@ -79,9 +81,11 @@ if __name__ == '__main__':
     args.num_labels = dataset_map[args.dataset].NUM_CLASSES
     args.is_multilabel = dataset_map[args.dataset].IS_MULTILABEL
 
-    if os.path.exists(args.save_path) and os.listdir(args.save_path) and args.do_train:
-        shutil.rmtree(args.save_path)
-    os.makedirs(os.path.join(args.save_path, dataset_map[args.dataset].NAME))
+    if args.do_train:
+        save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
+        if os.path.exists(save_path) and os.listdir(save_path):
+            shutil.rmtree(save_path)
+        os.makedirs(save_path)
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
