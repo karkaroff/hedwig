@@ -10,6 +10,18 @@ To run the model on the Reuters dataset, just run the following from the working
 python -m models.xml_cnn --mode static --dataset Reuters --batch-size 32 --lr 0.01 --epochs 30 --dropout 0.5 --dynamic-pool-length 8 --seed 3435
 ```
 
+The best model weight will be saved in
+
+```
+models/xml_cnn/saves/Reuters/best_model.pt
+```
+
+To test the model, you can use the following command.
+
+```
+python -m models.xml_cnn --dataset Reuters --mode static --batch-size 32 --dynamic-pool-length 8 --trained-model models/xml_cnn/saves/Reuters/best_model.pt --seed 3435
+```
+
 ## Model Type
 
 - rand: All words are randomly initialized and then modified during training.

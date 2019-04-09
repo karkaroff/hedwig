@@ -10,31 +10,23 @@ To run the model on Reuters dataset on static, just run the following from the p
 python -m models.han --dataset Reuters --mode static --batch-size 32 --lr 0.01 --epochs 30 --seed 3435
 ```
 
-## Model Types
-
-- rand: All words are randomly initialized and then modified during training.
-- static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). All words -- including the unknown ones that are initialized with zero -- are kept static and only the other parameters of the model are learned.
-- non-static: Same as above but the pretrained vectors are fine-tuned for each task.
-
-## Quick Start
-
-To run the model on Reuters dataset on static, just run the following from the Castor working directory.
+The best model weights will be saved in
 
 ```
-python -m han --dataset Reuters 
-```
-
-The file will be saved in
-
-```
-han/saves/best_model.pt
+models/han/saves/Reuters/best_model.pt
 ```
 
 To test the model, you can use the following command.
 
 ```
-python -m han --trained_model han/saves/Reuters/static_best_model.pt 
+python -m models.han --dataset Reuters --mode static --batch-size 32 --trained-model models/han/saves/Reuters/best_model.pt --seed 3435
 ```
+
+## Model Types
+
+- rand: All words are randomly initialized and then modified during training.
+- static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). All words -- including the unknown ones that are initialized with zero -- are kept static and only the other parameters of the model are learned.
+- non-static: Same as above but the pretrained vectors are fine-tuned for each task.
 
 ## Dataset
 

@@ -10,6 +10,18 @@ To run the model on Reuters dataset on static, just run the following from the p
 python -m models.reg_lstm --dataset Reuters --mode static --batch-size 32 --lr 0.01 --epochs 30 --bidirectional --num-layers 1 --hidden-dim 512 --wdrop 0.1 --embed-droprate 0.2 --dropout 0.5 --beta-ema 0.99 --seed 3435
 ```
 
+The best model weights will be saved in
+
+```
+model/reg_lstm/saves/Reuters/best_model.pt
+```
+
+To test the model, you can use the following command.
+
+```
+python -m models.reg_lstm --dataset Reuters --mode static --batch-size 32 --trained-model models/reg_lstm/saves/Reuters/best_model.pt --seed 3435
+```
+
 ## Model types
 
 - rand: All words are randomly initialized and then modified during training.
