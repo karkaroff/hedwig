@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/daemontoys/hedwig/blob/bellatrix/docs/hedwig2.png" width="360">
+<img src="https://github.com/karkaroff/hedwig/blob/bellatrix/docs/hedwig.png" width="360">
 </p>
 
 This repo contains PyTorch deep learning models for document classification, implemented by the Data Systems Group at the University of Waterloo.
