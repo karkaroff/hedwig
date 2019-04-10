@@ -65,6 +65,7 @@ if __name__ == '__main__':
         ptvsd.wait_for_attach()
 
     dataset_map = {
+        'SST-2': SST2Processor
         'Reuters': ReutersProcessor,
         'IMDB': IMDBProcessor,
         'AAPD': AAPDProcessor,
