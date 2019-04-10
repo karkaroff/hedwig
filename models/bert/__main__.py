@@ -66,17 +66,11 @@ if __name__ == '__main__':
 
     dataset_map = {
         'Reuters': ReutersProcessor,
-<<<<<<< HEAD
         'IMDB': IMDBProcessor,
         'AAPD': AAPDProcessor,
         'AGNews': AGNewsProcessor,
         'Yelp2014': Yelp2014Processor,
         'Sogou': SogouProcessor
-=======
-        'AAPD': AAPDProcessor,
-        'IMDB': IMDBProcessor,
-        'SST-2': SST2Processor
->>>>>>> 9afe5c1c45f87a66cff2dc78a6b331a05423669f
     }
 
     if args.gradient_accumulation_steps < 1:
