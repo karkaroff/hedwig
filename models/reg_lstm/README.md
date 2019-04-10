@@ -22,7 +22,7 @@ To test the model, you can use the following command.
 python -m models.reg_lstm --dataset Reuters --mode static --batch-size 32 --trained-model models/reg_lstm/saves/Reuters/best_model.pt --seed 3435
 ```
 
-## Model types
+## Model Types
 
 - rand: All words are randomly initialized and then modified during training.
 - static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). 

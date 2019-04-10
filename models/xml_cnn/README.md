@@ -22,7 +22,7 @@ To test the model, you can use the following command.
 python -m models.xml_cnn --dataset Reuters --mode static --batch-size 32 --dynamic-pool-length 8 --trained-model models/xml_cnn/saves/Reuters/best_model.pt --seed 3435
 ```
 
-## Model Type
+## Model Types
 
 - rand: All words are randomly initialized and then modified during training.
 - static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). All words -- including the unknown ones that are initialized with zero -- are kept static and only the other parameters of the model are learned.
