@@ -87,7 +87,7 @@ if __name__ == '__main__':
     args.num_labels = dataset_map[args.dataset].NUM_CLASSES
     args.is_multilabel = dataset_map[args.dataset].IS_MULTILABEL
 
-    if args.do_train:
+    if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
         if os.path.exists(save_path) and os.listdir(save_path):
             shutil.rmtree(save_path)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     train_examples = None
     num_train_optimization_steps = None
-    if args.do_train:
+    if not args.trained_model:
         train_examples = processor.get_train_examples(args.data_dir)
         num_train_optimization_steps = int(
             len(train_examples) / args.batch_size / args.gradient_accumulation_steps) * args.epochs
@@ -154,12 +154,13 @@ if __name__ == '__main__':
 
     trainer = BertTrainer(model, optimizer, processor, args)
 
-    if args.do_train:
+    if not args.trained_model:
         trainer.train()
+        model = torch.load(trainer.snapshot_path)
     else:
         model = BertForSequenceClassification.from_pretrained(args.model, num_labels=args.num_labels)
+        model = torch.load(args.trained_model)
 
-    model = torch.load(trainer.snapshot_path)
     evaluate_split(model, processor, args, split='dev')
     evaluate_split(model, processor, args, split='test')
 
