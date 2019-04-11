@@ -21,7 +21,7 @@ def get_args():
                              'Sequences longer than this will be truncated, and sequences shorter \n'
                              'than this will be padded.')
 
-    parser.add_argument('--do-train', action='store_true')
+    parser.add_argument('--trained-model', default=None, type=str)
     parser.add_argument('--local-rank', type=int, default=-1, help='local rank for distributed training')
     parser.add_argument('--fp16', action='store_true', help='use 16-bit floating point precision')
 
