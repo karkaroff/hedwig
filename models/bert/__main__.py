@@ -7,8 +7,11 @@ import torch
 
 from common.evaluators.bert_evaluator import BertEvaluator
 from common.trainers.bert_trainer import BertTrainer
+from datasets.bert_processors.aapd_processor import AAPDProcessor
+from datasets.bert_processors.agnews_processor import AGNewsProcessor
 from datasets.bert_processors.imdb_processor import IMDBProcessor
 from datasets.bert_processors.reuters_processor import ReutersProcessor
+from datasets.bert_processors.sogou_processor import SogouProcessor
 from datasets.bert_processors.sst_processor import SST2Processor
 from datasets.bert_processors.aapd_processor import AAPDProcessor
 from models.bert.args import get_args
@@ -62,10 +65,13 @@ if __name__ == '__main__':
         ptvsd.wait_for_attach()
 
     dataset_map = {
-        'Reuters': ReutersProcessor,
-        'AAPD': AAPDProcessor,
-        'IMDB': IMDBProcessor,
         'SST-2': SST2Processor
+        'Reuters': ReutersProcessor,
+        'IMDB': IMDBProcessor,
+        'AAPD': AAPDProcessor,
+        'AGNews': AGNewsProcessor,
+        'Yelp2014': Yelp2014Processor,
+        'Sogou': SogouProcessor
     }
 
     if args.gradient_accumulation_steps < 1:
@@ -156,3 +162,4 @@ if __name__ == '__main__':
     model = torch.load(trainer.snapshot_path)
     evaluate_split(model, processor, args, split='dev')
     evaluate_split(model, processor, args, split='test')
+
