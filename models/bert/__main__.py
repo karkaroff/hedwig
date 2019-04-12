@@ -13,7 +13,7 @@ from datasets.bert_processors.imdb_processor import IMDBProcessor
 from datasets.bert_processors.reuters_processor import ReutersProcessor
 from datasets.bert_processors.sogou_processor import SogouProcessor
 from datasets.bert_processors.sst_processor import SST2Processor
-from datasets.bert_processors.aapd_processor import AAPDProcessor
+from datasets.bert_processors.yelp2014_processor import Yelp2014Processor
 from models.bert.args import get_args
 from models.bert.model import BertForSequenceClassification
 from utils.io import PYTORCH_PRETRAINED_BERT_CACHE
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         ptvsd.wait_for_attach()
 
     dataset_map = {
-        'SST-2': SST2Processor
+        'SST-2': SST2Processor,
         'Reuters': ReutersProcessor,
         'IMDB': IMDBProcessor,
         'AAPD': AAPDProcessor,
@@ -159,7 +159,13 @@ if __name__ == '__main__':
         model = torch.load(trainer.snapshot_path)
     else:
         model = BertForSequenceClassification.from_pretrained(args.model, num_labels=args.num_labels)
-        model = torch.load(args.trained_model)
+        model_ = torch.load(args.trained_model, map_location=lambda storage, loc: storage)
+        state={}
+        for key in model_.state_dict().keys():
+            new_key = key.replace("module.", "")
+            state[new_key] = model_.state_dict()[key]
+        model.load_state_dict(state)
+        model = model.to(device)
 
     evaluate_split(model, processor, args, split='dev')
     evaluate_split(model, processor, args, split='test')
