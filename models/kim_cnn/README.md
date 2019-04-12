@@ -13,16 +13,16 @@ python -m models.kim_cnn --mode static --dataset Reuters --batch-size 32 --lr 0.
 The best model weights will be saved in
 
 ```
-models/kim_cnn/saves/best_model.pt
+models/kim_cnn/saves/Reuters/best_model.pt
 ```
 
 To test the model, you can use the following command.
 
 ```
-python -m kim_cnn --mode static --trained-model models/kim_cnn/saves/Reuters/best_model.pt
+python -m models.kim_cnn --dataset Reuters --mode static --batch-size 32 --trained-model models/kim_cnn/saves/Reuters/best_model.pt --seed 3435
 ```
 
-## Model Type
+## Model Types
 
 - rand: All words are randomly initialized and then modified during training.
 - static: A model with pre-trained vectors from [word2vec](https://code.google.com/archive/p/word2vec/). 
