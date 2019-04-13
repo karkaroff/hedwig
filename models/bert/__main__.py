@@ -1,4 +1,4 @@
-import os
+import os, errno
 import random
 import shutil
 
@@ -89,9 +89,11 @@ if __name__ == '__main__':
 
     if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
-        if os.path.exists(save_path) and os.listdir(save_path):
-            shutil.rmtree(save_path)
-        os.makedirs(save_path)
+        try:
+            os.makedirs(save_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
