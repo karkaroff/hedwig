@@ -10,7 +10,7 @@ def get_args():
     parser.add_argument('--model', default=None, type=str, required=True,
                         choices=['bert-base-uncased', 'bert-large-uncased', 'bert-base-cased', 'bert-large-cased'])
 
-    parser.add_argument('--dataset', type=str, default='SST-2', choices=['SST-2', 'Reuters', 'AAPD', 'IMDB', 'Yelp2014'])
+    parser.add_argument('--dataset', type=str, default='SST-2', choices=['SST-2', 'AGNews', 'Reuters', 'AAPD', 'IMDB', 'Yelp2014'])
     parser.add_argument('--save-path', type=str, default=os.path.join('models', 'bert', 'saves'))
     parser.add_argument('--cache-dir', default='cache', type=str)
 
@@ -21,7 +21,7 @@ def get_args():
                              'Sequences longer than this will be truncated, and sequences shorter \n'
                              'than this will be padded.')
 
-    parser.add_argument('--do-train', action='store_true')
+    parser.add_argument('--trained-model', default=None, type=str)
     parser.add_argument('--local-rank', type=int, default=-1, help='local rank for distributed training')
     parser.add_argument('--fp16', action='store_true', help='use 16-bit floating point precision')
 
