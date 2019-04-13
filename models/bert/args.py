@@ -11,7 +11,7 @@ def get_args():
                         choices=['bert-base-uncased', 'bert-large-uncased', 'bert-base-cased', 'bert-large-cased'])
 
     parser.add_argument('--dataset', type=str, default='SST-2', choices=['SST-2', 'AGNews', 'Reuters', 'AAPD', 'IMDB', 'Yelp2014'])
-    parser.add_argument('--save-path', type=str, default=os.path.join('models', 'bert', 'saves'))
+    parser.add_argument('--save-path', type=str, default=os.path.join('model_checkpoints', 'bert'))
     parser.add_argument('--cache-dir', default='cache', type=str)
 
     parser.add_argument('--max-seq-length',
