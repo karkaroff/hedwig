@@ -93,7 +93,7 @@ if __name__ == '__main__':
             os.makedirs(save_path)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                raise
+                raise e
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
