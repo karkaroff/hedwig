@@ -24,8 +24,10 @@ class ClassificationTrainer(Trainer):
             '{:>6.0f},{:>5.0f},{:>9.0f},{:>5.0f}/{:<5.0f} {:>7.0f}%,{:>8.6f},{:12.4f}'.split(','))
         self.dev_log_template = ' '.join(
             '{:>6.0f},{:>5.0f},{:>9.0f},{:>5.0f}/{:<5.0f} {:>7.4f},{:>8.4f},{:8.4f},{:12.4f},{:12.4f}'.split(','))
-        self.writer = SummaryWriter(log_dir="tensorboard_logs/" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-        self.snapshot_path = os.path.join(self.model_outfile, self.train_loader.dataset.NAME, 'best_model.pt')
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.writer = SummaryWriter(log_dir="tensorboard_logs/" + timestamp)
+        self.snapshot_path = os.path.join(self.model_outfile, self.train_loader.dataset.NAME, '%s.pt' % timestamp)
 
     def train_epoch(self, epoch):
         self.train_loader.init_epoch()
