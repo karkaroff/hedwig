@@ -1,4 +1,4 @@
-import os
+import os, errno
 import random
 import shutil
 
@@ -13,7 +13,7 @@ from datasets.bert_processors.imdb_processor import IMDBProcessor
 from datasets.bert_processors.reuters_processor import ReutersProcessor
 from datasets.bert_processors.sogou_processor import SogouProcessor
 from datasets.bert_processors.sst_processor import SST2Processor
-from datasets.bert_processors.aapd_processor import AAPDProcessor
+from datasets.bert_processors.yelp2014_processor import Yelp2014Processor
 from models.bert.args import get_args
 from models.bert.model import BertForSequenceClassification
 from utils.io import PYTORCH_PRETRAINED_BERT_CACHE
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         ptvsd.wait_for_attach()
 
     dataset_map = {
-        'SST-2': SST2Processor
+        'SST-2': SST2Processor,
         'Reuters': ReutersProcessor,
         'IMDB': IMDBProcessor,
         'AAPD': AAPDProcessor,
@@ -87,11 +87,13 @@ if __name__ == '__main__':
     args.num_labels = dataset_map[args.dataset].NUM_CLASSES
     args.is_multilabel = dataset_map[args.dataset].IS_MULTILABEL
 
-    if args.do_train:
+    if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
-        if os.path.exists(save_path) and os.listdir(save_path):
-            shutil.rmtree(save_path)
-        os.makedirs(save_path)
+        try:
+            os.makedirs(save_path)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
@@ -99,7 +101,7 @@ if __name__ == '__main__':
 
     train_examples = None
     num_train_optimization_steps = None
-    if args.do_train:
+    if not args.trained_model:
         train_examples = processor.get_train_examples(args.data_dir)
         num_train_optimization_steps = int(
             len(train_examples) / args.batch_size / args.gradient_accumulation_steps) * args.epochs
@@ -154,12 +156,19 @@ if __name__ == '__main__':
 
     trainer = BertTrainer(model, optimizer, processor, args)
 
-    if args.do_train:
+    if not args.trained_model:
         trainer.train()
+        model = torch.load(trainer.snapshot_path)
     else:
         model = BertForSequenceClassification.from_pretrained(args.model, num_labels=args.num_labels)
+        model_ = torch.load(args.trained_model, map_location=lambda storage, loc: storage)
+        state={}
+        for key in model_.state_dict().keys():
+            new_key = key.replace("module.", "")
+            state[new_key] = model_.state_dict()[key]
+        model.load_state_dict(state)
+        model = model.to(device)
 
-    model = torch.load(trainer.snapshot_path)
     evaluate_split(model, processor, args, split='dev')
     evaluate_split(model, processor, args, split='test')
 
