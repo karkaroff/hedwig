@@ -1,4 +1,3 @@
-import errno
 import logging
 import os
 import random
@@ -118,11 +117,7 @@ if __name__ == '__main__':
 
     if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
-        try:
-            os.makedirs(save_path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise e
+        os.makedirs(save_path, exist_ok=True)
 
     parameter = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = torch.optim.Adam(parameter, lr=args.lr, weight_decay=args.weight_decay)

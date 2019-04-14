@@ -1,8 +1,7 @@
-import errno
-import os
-from copy import deepcopy
 import logging
+import os
 import random
+from copy import deepcopy
 
 import numpy as np
 import torch
@@ -10,10 +9,10 @@ import torch.onnx
 
 from common.evaluate import EvaluatorFactory
 from common.train import TrainerFactory
-from datasets.reuters import Reuters
 from datasets.aapd import AAPD
-from datasets.yelp2014 import Yelp2014
 from datasets.imdb import IMDB
+from datasets.reuters import Reuters
+from datasets.yelp2014 import Yelp2014
 from models.xml_cnn.args import get_args
 from models.xml_cnn.model import XmlCNN
 
@@ -115,11 +114,7 @@ if __name__ == '__main__':
 
     if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
-        try:
-            os.makedirs(save_path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise e
+        os.makedirs(save_path, exist_ok=True)
 
     parameter = filter(lambda p: p.requires_grad, model.parameters())
     optimizer = torch.optim.Adam(parameter, lr=args.lr, weight_decay=args.weight_decay)

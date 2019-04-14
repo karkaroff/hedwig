@@ -1,6 +1,5 @@
-import os, errno
+import os
 import random
-import shutil
 
 import numpy as np
 import torch
@@ -89,11 +88,7 @@ if __name__ == '__main__':
 
     if not args.trained_model:
         save_path = os.path.join(args.save_path, dataset_map[args.dataset].NAME)
-        try:
-            os.makedirs(save_path)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise e
+        os.makedirs(save_path, exist_ok=True)
 
     processor = dataset_map[args.dataset]()
     args.is_lowercase = 'uncased' in args.model
