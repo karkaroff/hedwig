@@ -23,7 +23,10 @@ class BertTrainer(object):
         self.processor = processor
         self.train_examples = self.processor.get_train_examples(args.data_dir)
         self.tokenizer = BertTokenizer.from_pretrained(args.model, is_lowercase=args.is_lowercase)
-        self.writer = SummaryWriter(log_dir="tensorboard_logs/" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        self.writer = SummaryWriter(log_dir="tensorboard_logs/" + timestamp)
+        self.snapshot_path = os.path.join(self.args.save_path, self.processor.NAME, '%s.pt' % timestamp)
 
         self.num_train_optimization_steps = int(
             len(self.train_examples) / args.batch_size / args.gradient_accumulation_steps) * args.epochs
@@ -33,7 +36,6 @@ class BertTrainer(object):
         self.log_header = 'Epoch Iteration Progress   Dev/Acc.  Dev/Pr.  Dev/Re.   Dev/F1   Dev/Loss'
         self.log_template = ' '.join('{:>5.0f},{:>9.0f},{:>6.0f}/{:<5.0f} {:>6.4f},{:>8.4f},{:8.4f},{:8.4f},{:10.4f}'.split(','))
 
-        self.snapshot_path = os.path.join(self.args.save_path, self.processor.NAME, 'best_model.pt')
         self.iterations, self.nb_tr_steps, self.tr_loss = 0, 0, 0
         self.best_dev_f1, self.unimproved_iters = 0, 0
         self.early_stop = False
